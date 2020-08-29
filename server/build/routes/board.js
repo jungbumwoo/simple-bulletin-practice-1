@@ -17,6 +17,51 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 var router = _express["default"].Router();
 
+router.get("/:id", function (req, res) {
+  if (!req.session.token) {
+    return res.json({
+      ok: false,
+      status: 404,
+      error: "unauthorized"
+    });
+  }
+
+  var bbsId = req.params.id;
+  var sql = "SELECT b.id, b.title, b.content, u.username FROM board b INNER JOIN user u ON b.writer = u.id WHERE b.id = ?";
+  var post = [bbsId];
+
+  _mysql["default"].query(sql, post, function (err, results, fields) {
+    if (err) {
+      console.log(err);
+      return res.json({
+        ok: false,
+        status: 400,
+        error: "db error"
+      });
+    }
+
+    var board = results[0];
+    var sql = "SELECT c.id, c.message, u.username FROM comment c INNER JOIN user u ON c.writer = u.id INNER JOIN board b ON c.board = b.id WHERE b.id = ?";
+    var post = [bbsId];
+
+    _mysql["default"].query(sql, post, function (err, results, fields) {
+      if (err) {
+        console.log(err);
+        return res.json({
+          ok: false,
+          status: 400,
+          error: "db error2"
+        });
+      }
+
+      var comments = results;
+      return res.json({
+        board: board,
+        comments: comments
+      });
+    });
+  });
+});
 router.post("/", /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(req, res) {
     var username, title, content, sql, post;

@@ -14,10 +14,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
 var router = _express["default"].Router();
 
 router.get("/token", function (req, res) {
-  console.log(req.session);
+  var user = req.session.token;
   var token = req.sessionID;
   console.log(req.session.token);
-  var user = req.session.token;
   return res.json({
     user: user,
     token: token
@@ -65,7 +64,7 @@ router.get("/logout", function (req, res) {
     status: 200
   });
 });
-router.get("/new", function (req, res) {
+router.post("/new", function (req, res) {
   console.log("req is ".concat(req.body));
   var username = req.body.username;
   var password = req.body.password;

@@ -1,9 +1,9 @@
 import express from "express";
-import home from "./home";
 import profile from "./profile";
 import feed from "./feed";
 import auth from "./auth";
 import boardlist from "./boardlist";
+import comment from "./comment";
 
 const router = express.Router();
 

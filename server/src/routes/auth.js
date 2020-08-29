@@ -3,10 +3,9 @@ import mysql from "../db/mysql";
 const router = express.Router();
 
 router.get("/token", (req, res) => {
-    console.log(req.session);
+    const user = req.session.token;
     const token = req.sessionID
     console.log(req.session.token);
-    const user = req.session.token;
     return res.json({
         user: user,
         token
@@ -55,7 +54,7 @@ router.get("/logout", (req, res) => {
     });
 });
 
-router.get("/new", (req, res) => {
+router.post("/new", (req, res) => {
     console.log(`req is ${req.body}`);
     const username = req.body.username;
     const password = req.body.password;
