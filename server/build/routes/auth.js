@@ -7,12 +7,64 @@ exports["default"] = void 0;
 
 var _express = _interopRequireDefault(require("express"));
 
-var _mysql = _interopRequireDefault(require("../../build/db/mysql"));
+var _mysql = _interopRequireDefault(require("../db/mysql"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 var router = _express["default"].Router();
 
+router.get("/token", function (req, res) {
+  console.log(req.session);
+  var token = req.sessionID;
+  console.log(req.session.token);
+  var user = req.session.token;
+  return res.json({
+    user: user,
+    token: token
+  });
+});
+router.post("/login", function (req, res) {
+  var username = req.body.username;
+  var password = req.body.password;
+  var sql = "SELECT password FROM user WHERE username = ?";
+  var post = [username];
+
+  _mysql["default"].query(sql, post, function (err, results, fields) {
+    if (err) {
+      console.log(err);
+      return res.json({
+        ok: false,
+        error: "db error",
+        status: 400
+      });
+    } else {
+      var user_password = results[0].password;
+
+      if (password === user_password) {
+        req.session.token = username;
+        return res.json({
+          ok: true,
+          error: null,
+          status: 200
+        });
+      } else {
+        return res.json({
+          ok: false,
+          error: "check again username and password",
+          status: 400
+        });
+      }
+    }
+  });
+});
+router.get("/logout", function (req, res) {
+  delete req.session.token;
+  return res.json({
+    ok: true,
+    error: null,
+    status: 200
+  });
+});
 router.get("/new", function (req, res) {
   console.log("req is ".concat(req.body));
   var username = req.body.username;
